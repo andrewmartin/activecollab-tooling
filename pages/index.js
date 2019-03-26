@@ -25,8 +25,6 @@ class Home extends Component {
   render() {
     const { projectItems } = this.props;
 
-    console.log('projectItems', projectItems);
-
     return (
       <div>
         <Head />

@@ -4,6 +4,7 @@ import { parseServerError } from 'store/helpers';
 export const fetchProjectStart = createAction('project/FETCH_START');
 export const projectError = createAction('project/PROJECT_ERROR');
 export const projectsFetchSuccess = createAction('project/PROJECTS_FETCH_SUCCESS');
+export const projectTimeSuccess = createAction('project/PROJECTS_TIME_SUCCESS');
 
 export const actions = {
   fetchProjects: () => async (dispatch, getState, { apiService: { api } }) => {
@@ -16,6 +17,25 @@ export const actions = {
         },
       });
       return dispatch(projectsFetchSuccess(data));
+    } catch (error) {
+      console.log('error', error);
+      return dispatch(
+        projectError({
+          error: parseServerError(error),
+        })
+      );
+    }
+  },
+  fetchTime: id => async (dispatch, getState, { apiService: { api } }) => {
+    dispatch(fetchProjectStart());
+
+    try {
+      const { data } = await api.instance(`/projects/${id}/time-records`, {
+        headers: {
+          'X-Angie-AuthApiToken': getState().user.token,
+        },
+      });
+      return dispatch(projectTimeSuccess({ data, id }));
     } catch (error) {
       console.log('error', error);
       return dispatch(
@@ -38,6 +58,19 @@ const buildItems = payload => {
   });
 
   return obj;
+};
+
+const appendToItem = (items, id, data) => {
+  const newItems = Object.assign({}, items);
+
+  if (newItems[id]) {
+    newItems[id] = {
+      ...newItems[id],
+      ...data,
+    };
+  }
+
+  return newItems;
 };
 
 const defaultState = {
@@ -63,6 +96,16 @@ export default handleActions(
         return {
           ...state,
           items: { ...buildItems(payload) },
+          isLoading: false,
+          serverError: null,
+        };
+      },
+    },
+    [projectTimeSuccess]: {
+      next: (state, { payload: { id, data } }) => {
+        return {
+          ...state,
+          items: appendToItem(state.items, id, data),
           isLoading: false,
           serverError: null,
         };

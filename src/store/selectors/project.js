@@ -6,7 +6,5 @@ export const getProjects = state => {
 };
 
 export const getProject = (state = { items: {} }, id) => {
-  console.log('state', state);
-
   return state.items[id] ? state.items[id] : {};
 };

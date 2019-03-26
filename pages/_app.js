@@ -2,7 +2,7 @@ import App, { Container } from 'next/app';
 import React from 'react';
 import withRedux from 'next-redux-wrapper';
 import { bindAllActions } from 'store/actions/helpers';
-import { ConnectedRouter } from 'connected-next-router';
+import { ConnectedRouter, LOCATION_CHANGE } from 'connected-next-router';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import configureStore from 'store';
@@ -20,6 +20,19 @@ class Application extends App {
         store: { dispatch },
       },
     } = props;
+
+    if (ctx.isServer) {
+      dispatch({
+        type: LOCATION_CHANGE,
+        payload: {
+          location: {
+            pathname: ctx.asPath,
+            query: ctx.query,
+          },
+          action: 'POP',
+        },
+      });
+    }
 
     const { actions } = bindAllActions(dispatch);
 

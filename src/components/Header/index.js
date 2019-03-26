@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Layout, Button } from 'antd';
 
 import { WithUser, WithoutUser } from 'components/connect';
+import ActiveLink from 'components/ActiveLink';
 import { TYPES } from 'store/reducers/modal';
 
 export default class Header extends Component {
@@ -26,7 +27,9 @@ export default class Header extends Component {
       <header className="masthead">
         <Layout>
           <Layout.Content>
-            <h1>Lemonade ActiveCollab</h1>
+            <h1>
+              <ActiveLink href="/">Lemonade ActiveCollab</ActiveLink>
+            </h1>
             <ul className="nav">
               <WithoutUser>
                 <li>

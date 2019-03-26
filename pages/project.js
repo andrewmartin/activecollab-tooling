@@ -1,46 +1,53 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { WithUser } from 'components/connect';
+import TimeRecords from 'components/TimeRecords';
 
 import { bindAllActions } from 'store/actions/helpers';
 import Head from 'components/Head';
-import Project from 'components/Project';
 import { getProject } from 'store/selectors/project';
 
-class Home extends Component {
-  static async getInitialProps(req, ctx) {
-    console.log('req', req);
-    console.log('ctx', ctx);
+class ProjectPage extends Component {
+  static defaultProps = {
+    project: {
+      id: null,
+    },
+  };
 
+  static async getInitialProps(req) {
     return {
       query: req.query,
     };
   }
 
-  componentDidUpdate = prevProps => {
+  componentDidUpdate = async prevProps => {
     const {
+      project: { id },
+      actions: { fetchProjects, fetchTime },
       user: { token },
     } = this.props;
 
     if (token !== prevProps.user.token) {
-      const {
-        actions: { fetchProjects },
-      } = this.props;
+      await fetchProjects();
+    }
 
-      fetchProjects();
+    if (id !== prevProps.project.id) {
+      fetchTime(id);
     }
   };
 
   render() {
     const { project } = this.props;
-
-    console.log('this.props', this.props);
+    const { name, time_records } = project;
 
     return (
       <div>
         <Head />
         <WithUser>
-          <Project {...project} />
+          <>
+            <h2>{name}</h2>
+            <TimeRecords items={time_records} />
+          </>
         </WithUser>
       </div>
     );
@@ -48,7 +55,6 @@ class Home extends Component {
 }
 
 const mapStateToProps = ({ user, project }, ownProps) => {
-  console.log('ownProps', ownProps);
   const {
     query: { id },
   } = ownProps;
@@ -64,4 +70,4 @@ const mapDispatchToProps = dispatch => bindAllActions(dispatch);
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Home);
+)(ProjectPage);
