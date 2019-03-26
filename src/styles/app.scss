@@ -1,0 +1,51 @@
+// mixins
+
+@mixin align-center {
+  display: flex;
+  align-items: center;
+}
+
+#__next,
+html,
+body {
+  height: 100%;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.masthead .ant-layout-content {
+  @include align-center;
+  padding: 25px;
+
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.list-unstyled {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.nav {
+  margin-left: auto;
+
+  @extend .list-unstyled;
+}
+
+ul.project-list {
+  display: flex;
+  flex-direction: column;
+  margin: 50px 0;
+
+  @extend .list-unstyled;
+  li {
+    margin: 0 0 15px;
+  }
+}
