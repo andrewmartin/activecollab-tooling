@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { WithUser } from 'components/connect';
 import TimeRecords from 'components/TimeRecords';
 import { DateRangePicker } from 'react-dates';
-import { Button } from 'antd';
 import moment from 'moment';
 import { bindAllActions } from 'store/actions/helpers';
 import Head from 'components/Head';
@@ -55,7 +54,7 @@ class ProjectPage extends Component {
     }
   };
 
-  bulkUpdate = items => {
+  onBulkUpdate = items => {
     const {
       project: { id },
       actions: { bulkUpdateBillable },
@@ -90,7 +89,11 @@ class ProjectPage extends Component {
             {isLoadingProject ? (
               <div className="loading">Loading...</div>
             ) : (
-              <TimeRecords bulkUpdate={this.bulkUpdate} items={time_records} />
+              <TimeRecords
+                onBulkUpdate={this.onBulkUpdate}
+                onExport={this.onExport}
+                items={time_records}
+              />
             )}
           </>
         </WithUser>
