@@ -54,12 +54,20 @@ class ProjectPage extends Component {
     }
   };
 
-  onBulkUpdate = items => {
+  onBulkUpdate = (items, payload) => {
     const {
       project: { id },
       actions: { bulkUpdateBillable },
     } = this.props;
-    bulkUpdateBillable(id, items);
+    bulkUpdateBillable(id, items, payload);
+  };
+
+  onSingleUpdate = (items, payload) => {
+    const {
+      project: { id },
+      actions: { singleUpdateBillable },
+    } = this.props;
+    singleUpdateBillable(id, items, payload);
   };
 
   render() {
@@ -91,6 +99,7 @@ class ProjectPage extends Component {
             ) : (
               <TimeRecords
                 onBulkUpdate={this.onBulkUpdate}
+                onSingleUpdate={this.onSingleUpdate}
                 onExport={this.onExport}
                 items={time_records}
               />

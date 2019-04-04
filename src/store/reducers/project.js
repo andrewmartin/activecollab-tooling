@@ -8,8 +8,9 @@ export const projectTimeSuccess = createAction('project/PROJECTS_TIME_SUCCESS');
 export const projectUpdateBillableSuccess = createAction(
   'project/PROJECT_UPDATE_BILLABLE_SUCCESS'
 );
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+export const projectUpdateAllBillableSuccess = createAction(
+  'project/PROJECT_UPDATE_ALL_BILLABLE_SUCCESS'
+);
 
 export const actions = {
   fetchProjects: () => async (dispatch, getState, { apiService: { api } }) => {
@@ -51,15 +52,43 @@ export const actions = {
       );
     }
   },
-  bulkUpdateBillable: (id, items) => async (dispatch, getState, { apiService: { api } }) => {
+  bulkUpdateBillable: (id, items, payload) => async (
+    dispatch,
+    getState,
+    { apiService: { api } }
+  ) => {
     dispatch(fetchProjectStart());
 
     items.forEach(async record => {
       try {
         const { data } = await api.instance(`/projects/${id}/time-records/${record.id}`, {
-          data: {
-            billable_status: 1,
+          data: payload,
+          method: 'PUT',
+          headers: {
+            'X-Angie-AuthApiToken': getState().user.token,
           },
+        });
+        return dispatch(projectUpdateAllBillableSuccess({ data, id }));
+      } catch (error) {
+        return dispatch(
+          projectError({
+            error: parseServerError(error),
+          })
+        );
+      }
+    });
+  },
+  singleUpdateBillable: (id, items, payload) => async (
+    dispatch,
+    getState,
+    { apiService: { api } }
+  ) => {
+    dispatch(fetchProjectStart());
+
+    items.forEach(async record => {
+      try {
+        const { data } = await api.instance(`/projects/${id}/time-records/${record.id}`, {
+          data: payload,
           method: 'PUT',
           headers: {
             'X-Angie-AuthApiToken': getState().user.token,
@@ -67,7 +96,6 @@ export const actions = {
         });
         return dispatch(projectUpdateBillableSuccess({ data, id }));
       } catch (error) {
-        console.log('error', error);
         return dispatch(
           projectError({
             error: parseServerError(error),
@@ -111,6 +139,20 @@ const appendToTimeItem = (items, id, { single: data }) => {
     const timeRecords = newItems[id].time_records;
     const index = timeRecords.findIndex(i => i.id === data.id);
     newItems[id].time_records[index] = data;
+  }
+
+  return newItems;
+};
+
+const markAllBillable = (items, id) => {
+  const newItems = Object.assign({}, items);
+
+  if (newItems[id]) {
+    const timeRecords = newItems[id].time_records;
+    newItems[id].time_records = timeRecords.map(r => ({
+      ...r,
+      billable_status: 1,
+    }));
   }
 
   return newItems;
@@ -182,6 +224,16 @@ export default handleActions(
         return {
           ...state,
           items: appendToTimeItem(state.items, id, data),
+          isLoading: false,
+          serverError: null,
+        };
+      },
+    },
+    [projectUpdateAllBillableSuccess]: {
+      next: (state, { payload: { id, data } }) => {
+        return {
+          ...state,
+          items: markAllBillable(state.items, id, data),
           isLoading: false,
           serverError: null,
         };

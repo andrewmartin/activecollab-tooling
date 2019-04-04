@@ -44,9 +44,23 @@ export default class TimeRecords extends Component {
         title: 'Billable',
         dataIndex: 'billable_status',
         key: 'billable_status',
-        render: text => (
-          <span>{text === 1 && <Icon type="check-square" theme="filled" />}</span>
-        ),
+        render: (text, item) => {
+          return (
+            <span>
+              <>
+                <Button
+                  onClick={this.props.onSingleUpdate.bind(this, [item], {
+                    billable_status: text === 1 ? 0 : 1,
+                  })}>
+                  <>
+                    {text === 1 && <Icon type="check-square" theme="filled" />}
+                    Mark as {text === 1 ? ' unbillable' : ' billable'}
+                  </>
+                </Button>
+              </>
+            </span>
+          );
+        },
       },
     ],
   };
@@ -78,7 +92,9 @@ export default class TimeRecords extends Component {
       <div>
         <h2>Time Entries</h2>
         <Table rowKey="id" columns={columns} dataSource={items} />
-        <Button onClick={onBulkUpdate.bind(this, items)}>Bulk Update Billable Status</Button>
+        <Button onClick={onBulkUpdate.bind(this, items, { billable_status: 1 })}>
+          Bulk Update Billable Status
+        </Button>
 
         <CSVLink data={this.buildCSV()}>
           <Button>Download</Button>
