@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Divider, Tag } from 'antd';
+import { Table, Icon, Button } from 'antd';
 
 export default class TimeRecords extends Component {
   static defaultProps = {
@@ -36,21 +36,32 @@ export default class TimeRecords extends Component {
         title: 'Billable',
         dataIndex: 'billable_status',
         key: 'billable_status',
-        render: text => <span>{text}</span>,
+        render: text => (
+          <span>{text === 1 && <Icon type="check-square" theme="filled" />}</span>
+        ),
+      },
+      {
+        title: 'Updating',
+        dataIndex: 'isUpdating',
+        key: 'isUpdating',
+        render: isUpdating => {
+          return <span>{isUpdating && <Icon type="check-square" theme="filled" />}</span>;
+        },
       },
     ],
   };
 
   render() {
-    const { items } = this.props;
+    const { items, bulkUpdate } = this.props;
     const { columns } = this.state;
 
     if (!items.length) return null;
 
     return (
       <div>
-        <h2>Time</h2>
+        <h2>Time Entries</h2>
         <Table rowKey="id" columns={columns} dataSource={items} />
+        <Button onClick={bulkUpdate.bind(this, items)}>Bulk Update Billable Status</Button>
       </div>
     );
   }

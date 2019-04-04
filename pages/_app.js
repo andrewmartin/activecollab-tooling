@@ -6,6 +6,8 @@ import { ConnectedRouter, LOCATION_CHANGE } from 'connected-next-router';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import configureStore from 'store';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 
 import Layout from 'components/Layout/Layout';
 

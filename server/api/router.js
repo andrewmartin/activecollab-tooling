@@ -64,10 +64,39 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-router.get('/projects/:id/time-records', async (req, res) => {
+router.get('/projects/:id/time-records/filtered-by-date', async (req, res) => {
   const { ['x-angie-authapitoken']: token } = req.headers;
+
+  const url = `/projects/${req.params.id}/time-records/filtered-by-date`;
+
   try {
-    const { data } = await api.instance.get(`/projects/${req.params.id}/time-records`, {
+    const { data } = await api.instance.get(url, {
+      params: req.query,
+      headers: {
+        'X-Angie-AuthApiToken': token,
+      },
+    });
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    const { status, message } = parseError(error);
+
+    return res.status(status).json({ error: message });
+  }
+});
+
+router.put('/projects/:id/time-records/:timeRecordId', async (req, res) => {
+  const { ['x-angie-authapitoken']: token } = req.headers;
+
+  const { id, timeRecordId } = req.params;
+
+  const url = `/projects/${id}/time-records/${timeRecordId}`;
+
+  try {
+    const { data } = await api.instance(url, {
+      params: req.query,
+      method: 'PUT',
+      data: req.body,
       headers: {
         'X-Angie-AuthApiToken': token,
       },

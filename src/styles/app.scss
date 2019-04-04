@@ -49,3 +49,16 @@ ul.project-list {
     margin: 0 0 15px;
   }
 }
+
+.date-range-picker {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  > button {
+    height: 48px;
+  }
+  > div {
+    margin-right: 15px;
+  }
+}

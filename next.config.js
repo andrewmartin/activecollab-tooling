@@ -2,18 +2,19 @@ require('dotenv').config();
 const compose = require('next-compose');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const withSass = require('@zeit/next-sass');
-const withCss = require('@zeit/next-sass');
+const withCss = require('@zeit/next-css');
 const withImages = require('next-images');
 
 module.exports = compose(
   [
     [withImages],
+    [withCss],
     [
       withSass,
       {
         // cssModules: true,
-      }
-    ]
+      },
+    ],
   ],
   {
     webpack: config => {
@@ -21,18 +22,18 @@ module.exports = compose(
 
       const newConfig = {
         node: {
-          fs: 'empty'
+          fs: 'empty',
         },
-        ...config
+        ...config,
       };
       newConfig.plugins = [
         ...config.plugins,
         new FilterWarningsPlugin({
-          exclude: /mini-css-extract-plugin[^]*Conflicting order between:/
-        })
+          exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
+        }),
       ];
 
       return newConfig;
-    }
+    },
   }
 );
