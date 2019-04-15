@@ -21,6 +21,13 @@ export const actions = {
         user: { intent },
       } = data;
 
+      if (!accounts.length)
+        return dispatch(
+          userError({
+            error: 'No accounts found.',
+          })
+        );
+
       const [{ name }] = accounts;
 
       const {

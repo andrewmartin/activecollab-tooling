@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
+    "start": "yarn develop",
     "develop": "PORT=3002 nodemon ./server/index.js --watch ./server/ ./next.config.js"
   },
   "dependencies": {
