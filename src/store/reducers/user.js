@@ -36,6 +36,8 @@ export const actions = {
 
       return dispatch(loginUserSuccess({ ...data, token }));
     } catch (error) {
+      console.log('error', error);
+
       return dispatch(
         userError({
           error: parseServerError(error),
